@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Movie Database Search Engine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f4f4f9;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    .menu {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    #formSection, #output {
+      max-width: 600px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #007BFF;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 Movie Database</h1>
+
+  <div class="menu">
+    <button onclick="showForm('add')">Add Movie</button>
+    <button onclick="showMovies()">Display All</button>
+    <button onclick="showForm('searchName')">Search by Name</button>
+    <button onclick="showForm('searchYear')">Search by Year</button>
+    <button onclick="sortByRating()">Sort by Rating</button>
+    <button onclick="sortByYear()">Sort by Year</button>
+  </div>
+
+  <div id="formSection"></div>
+  <div id="output"></div>
+
+  <script>
+    let movies = []; // Local storage (simulate backend)
+
+    function showForm(type) {
+      let html = "";
+      if (type === "add") {
+        html = `
+          <h3>Add Movie</h3>
+          <input id="name" placeholder="Movie Name"><br><br>
+          <input id="year" type="number" placeholder="Year"><br><br>
+          <input id="rating" type="number" step="0.1" placeholder="Rating (0-10)"><br><br>
+          <button onclick="addMovie()">Save</button>
+        `;
+      } else if (type === "searchName") {
+        html = `
+          <h3>Search by Name</h3>
+          <input id="searchName" placeholder="Enter movie name">
+          <button onclick="searchByName()">Search</button>
+        `;
+      } else if (type === "searchYear") {
+        html = `
+          <h3>Search by Year</h3>
+          <input id="searchYear" type="number" placeholder="Enter year">
+          <button onclick="searchByYear()">Search</button>
+        `;
+      }
+      document.getElementById("formSection").innerHTML = html;
+      document.getElementById("output").innerHTML = "";
+    }
+
+    function addMovie() {
+      const name = document.getElementById("name").value;
+      const year = parseInt(document.getElementById("year").value);
+      const rating = parseFloat(document.getElementById("rating").value);
+      movies.push({id: movies.length+1, name, year, rating});
+      alert("Movie added!");
+      showMovies();
+    }
+
+    function showMovies() {
+      if (movies.length === 0) {
+        document.getElementById("output").innerHTML = "<p>No movies in database.</p>";
+        return;
+      }
+      let html = "<table><tr><th>ID</th><th>Name</th><th>Year</th><th>Rating</th></tr>";
+      movies.forEach(m => {
+        html += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.year}</td><td>${m.rating}</td></tr>`;
+      });
+      html += "</table>";
+      document.getElementById("output").innerHTML = html;
+    }
+
+    function searchByName() {
+      const query = document.getElementById("searchName").value.toLowerCase();
+      let results = movies.filter(m => m.name.toLowerCase().includes(query));
+      displayResults(results);
+    }
+
+    function searchByYear() {
+      const year = parseInt(document.getElementById("searchYear").value);
+      let results = movies.filter(m => m.year === year);
+      displayResults(results);
+    }
+
+    function sortByRating() {
+      movies.sort((a, b) => b.rating - a.rating);
+      showMovies();
+    }
+
+    function sortByYear() {
+      movies.sort((a, b) => a.year - b.year);
+      showMovies();
+    }
+
+    function displayResults(results) {
+      if (results.length === 0) {
+        document.getElementById("output").innerHTML = "<p>No movies found.</p>";
+        return;
+      }
+      let html = "<table><tr><th>ID</th><th>Name</th><th>Year</th><th>Rating</th></tr>";
+      results.forEach(m => {
+        html += `<tr><td>${m.id}</td><td>${m.name}</td><td>${m.year}</td><td>${m.rating}</td></tr>`;
+      });
+      html += "</table>";
+      document.getElementById("output").innerHTML = html;
+    }
+  </script>
+</body>
+</html>
